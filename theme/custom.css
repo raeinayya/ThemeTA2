@@ -1,0 +1,2248 @@
+/* ==========================================================
+   Data Analyst Agent — Theme v18 (Cocoa light · Sage dark · i18n-ready)
+
+   LIGHT MODE
+     • Page bg: Powder Blue gradient (#BDD7DE → #d8e6ea)
+     • Glass card on top, frosted (rgba(255,255,255,0.62) + 24px blur)
+     • Cocoa #583722 ink + Powder Blue accent (focus + badge)
+     • Embossed "DATA ANALYST / AGENT" bg text — TOP + BOTTOM split
+
+   DARK MODE
+     • Page bg: deep neutral #222222 with subtle radial depth
+     • TRUE glass card (rgba(255,255,255,0.06) + 20px blur)
+     • Sage #C2D8C4 ink + sage button + sage accent
+     • Embossed bg text in sage (timbul like light mode)
+
+   STRICT mapping to nay's UIUX folder:
+   [G N]  Grant (2018) Bab N           [K Bab N hal.X]  Krug (2013)
+   [M Lesson N hal.X]  Marsh (2016)    [N]  Nunnally & Farkas (2016)
+   [P1] Yudhanto et al. (2022) IEEE APICS
+   [P2] Ruiz et al. (2020) IEEE TLT — FENIkS
+   [P3] Gunawan et al. (2021) IEEE CONMEDIA
+   [MS hal.X]  UIUX_Master_Summary.pdf
+
+   "Pilihan glassmorphism" — MS hal.19. Contrast warning (MS hal.4)
+   honored: every text/bg pair clears WCAG AA, most clear AAA.
+   ========================================================== */
+
+
+/* ============================================
+   COLOR TOKENS
+   ============================================ */
+
+/* ---- LIGHT MODE — Cream + atmospheric pale-blue/peach blends ---- */
+:root {
+  /* Brand cocoa scale */
+  --cocoa:        #402D21;        /* deep cocoa — primary text + button bg */
+  --cocoa-deep:   #402D21;
+  --cocoa-soft:   #6C4D38;        /* medium cocoa — hover */
+  --cocoa-tan:    #CFB59E;        /* taupe — decorative tint */
+
+  /* Atmospheric palette */
+  --atmos-base:   #FEFAF8;        /* off-white base */
+  --atmos-blue:   #DDE6ED;        /* pale blue blend */
+  --atmos-peach:  #F8EADE;        /* peach cream blend */
+
+  /* Legacy aliases (kept for downstream rule reuse) */
+  --powder:       #DDE6ED;
+  --powder-soft:  #F8EADE;
+  --powder-pale:  #FEFAF8;
+
+  /* Functional aliases */
+  --accent:       var(--cocoa-deep);
+  --accent2:      var(--cocoa-soft);
+  --accent-light: var(--cocoa-tan);
+  --accent-glow:  rgba(221,230,237,0.55);    /* pale-blue focus glow */
+
+  /* Surfaces */
+  --card-bg:        rgba(255,255,255,0.62);
+  --card-bg-solid:  #ffffff;
+  --side-bg:        rgba(255,255,255,0.55);
+  --modal-bg:       #ffffff;
+  --login-card-bg:  rgba(255,255,255,0.62);
+
+  /* Text */
+  --text:   #402D21;
+  --text2:  #6C4D38;
+  --text3:  #8B6E51;
+
+  /* Inputs */
+  --input-bg:     rgba(255,255,255,0.62);
+  --input-border: rgba(64,45,33,0.20);
+  --hover:        rgba(64,45,33,0.06);
+  --code-bg:      rgba(255,255,255,0.70);
+  --divider:      rgba(64,45,33,0.12);
+
+  /* Page bg — layered radial gradients (cloud-like, atmospheric) */
+  --page-bg:
+    radial-gradient(ellipse at 18% 28%, var(--atmos-peach) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 72%, var(--atmos-blue)  0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, #ffffff           0%, transparent 70%),
+    var(--atmos-base);
+
+  /* Main interface (post-login) — neutral cream */
+  --neutral-bg:      var(--atmos-base);
+  --neutral-soft:    #F5EFE5;
+  --neutral-border:  rgba(64,45,33,0.10);
+
+  /* Main canvas bg — same cloud language as login, visible but low contrast.
+     Peach + hint of pale-blue + faint white center on the cream base. */
+  --main-bg:
+    radial-gradient(ellipse at 20% 30%, rgba(248,234,222,0.65) 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 70%, rgba(221,230,237,0.42) 0%, transparent 65%),
+    radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 75%),
+    var(--neutral-bg);
+
+  --side-border: rgba(64,45,33,0.10);
+  --blob-opacity: 0.20;
+
+  --card-shadow:
+    0 24px 60px rgba(64,45,33,0.10),
+    0 4px 12px rgba(64,45,33,0.06);
+  --soft-shadow:      0 4px 14px rgba(64,45,33,0.08);
+  --button-shadow:    0 6px 18px rgba(64,45,33,0.22);
+  --button-shadow-h:  0 8px 22px rgba(64,45,33,0.30);
+
+  /* No background text in this version — keep tokens for any leftover refs */
+  --emboss-color:      transparent;
+  --emboss-highlight:  transparent;
+  --emboss-shadow:     transparent;
+}
+
+/* ---- DARK MODE — Onyx with warm-glow patches ----
+   Palette: #1C1C1B (base) · #6A5D52 · #B7AC9B · #979086 · #E2E2DE   */
+.dark, :root.dark {
+  /* Brand scale — accent uses the warm tan #B7AC9B */
+  --cocoa:        #B7AC9B;
+  --cocoa-deep:   #E2E2DE;       /* off-white — hover */
+  --cocoa-soft:   #979086;       /* gray-tan — active */
+  --cocoa-tan:    #6A5D52;       /* warm brown — decorative */
+
+  /* Atmospheric */
+  --atmos-base:   #1C1C1B;
+  --atmos-blue:   rgba(183,172,155,0.04);
+  --atmos-peach:  rgba(106,93,82,0.10);
+
+  /* Legacy aliases */
+  --powder:       #B7AC9B;
+  --powder-soft:  rgba(183,172,155,0.08);
+  --powder-pale:  rgba(183,172,155,0.10);
+
+  /* Functional aliases */
+  --accent:       #B7AC9B;
+  --accent2:      #E2E2DE;
+  --accent-light: #979086;
+  --accent-glow:  rgba(183,172,155,0.40);
+
+  /* Surfaces */
+  --card-bg:        rgba(255,255,255,0.06);
+  --card-bg-solid:  #252523;     /* slightly lifted from base */
+  --side-bg:        rgba(255,255,255,0.04);
+  --modal-bg:       #252523;
+  --login-card-bg:  rgba(255,255,255,0.06);
+
+  /* Text — neutral grayscale-warm for premium feel */
+  --text:   #E2E2DE;             /* primary — high contrast */
+  --text2:  #B7AC9B;             /* secondary */
+  --text3:  #979086;             /* placeholder / metadata */
+
+  /* Inputs — bumped contrast per spec */
+  --input-bg:     rgba(255,255,255,0.07);   /* was 0.04 */
+  --input-border: rgba(226,226,222,0.28);   /* was 0.20 */
+  --hover:        rgba(255,255,255,0.06);
+  --code-bg:      rgba(255,255,255,0.04);
+  --divider:      rgba(255,255,255,0.10);
+
+  /* Page bg — Onyx with soft warm-glow patches */
+  --page-bg:
+    radial-gradient(ellipse at 18% 28%, rgba(106,93,82,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 72%, rgba(183,172,155,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(226,226,222,0.04) 0%, transparent 70%),
+    var(--atmos-base);
+
+  --neutral-bg:      #1C1C1B;
+  --neutral-soft:    #161615;
+  --neutral-border:  rgba(255,255,255,0.07);
+
+  /* Main canvas bg (dark) — Onyx with subtle blends of #2A2623 + #6A5D52 */
+  --main-bg:
+    radial-gradient(ellipse at 20% 30%, rgba(106,93,82,0.24) 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 70%, rgba(42,38,35,0.85) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(183,172,155,0.06) 0%, transparent 75%),
+    var(--neutral-bg);
+
+  --side-border: rgba(255,255,255,0.10);
+  --blob-opacity: 0.08;
+
+  --card-shadow:
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 24px 60px rgba(0,0,0,0.60),
+    0 4px 16px rgba(0,0,0,0.40);
+  --soft-shadow:      0 4px 14px rgba(0,0,0,0.45);
+  --button-shadow:    0 6px 18px rgba(183,172,155,0.18);
+  --button-shadow-h:  0 8px 22px rgba(183,172,155,0.28);
+
+  --emboss-color:      transparent;
+  --emboss-highlight:  transparent;
+  --emboss-shadow:     transparent;
+}
+
+/* ---- SYSTEM PREFERS DARK ---- */
+@media(prefers-color-scheme:dark){
+  :root:not(.dark):not([class]){
+    --cocoa:#B7AC9B;--cocoa-deep:#E2E2DE;--cocoa-soft:#979086;--cocoa-tan:#6A5D52;
+    --atmos-base:#1C1C1B;--atmos-blue:rgba(183,172,155,0.04);--atmos-peach:rgba(106,93,82,0.10);
+    --powder:#B7AC9B;--powder-soft:rgba(183,172,155,0.08);--powder-pale:rgba(183,172,155,0.10);
+    --accent:#B7AC9B;--accent2:#E2E2DE;--accent-light:#979086;
+    --accent-glow:rgba(183,172,155,0.40);
+    --card-bg:rgba(255,255,255,0.06);--card-bg-solid:#252523;
+    --side-bg:rgba(255,255,255,0.04);--modal-bg:#252523;
+    --login-card-bg:rgba(255,255,255,0.06);
+    --text:#E2E2DE;--text2:#B7AC9B;--text3:#979086;
+    --input-bg:rgba(255,255,255,0.07);--input-border:rgba(226,226,222,0.28);
+    --hover:rgba(255,255,255,0.06);--code-bg:rgba(255,255,255,0.04);
+    --divider:rgba(255,255,255,0.10);
+    --page-bg:radial-gradient(ellipse at 18% 28%,rgba(106,93,82,0.30) 0%,transparent 55%),radial-gradient(ellipse at 82% 72%,rgba(183,172,155,0.14) 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(226,226,222,0.04) 0%,transparent 70%),#1C1C1B;
+    --neutral-bg:#1C1C1B;--neutral-soft:#161615;--neutral-border:rgba(255,255,255,0.07);
+    --main-bg:radial-gradient(ellipse at 20% 30%,rgba(106,93,82,0.24) 0%,transparent 65%),radial-gradient(ellipse at 80% 70%,rgba(42,38,35,0.85) 0%,transparent 70%),radial-gradient(ellipse at 50% 50%,rgba(183,172,155,0.06) 0%,transparent 75%),#1C1C1B;
+    --side-border:rgba(255,255,255,0.10);--blob-opacity:0.08;
+    --card-shadow:0 0 0 1px rgba(255,255,255,0.04) inset,0 24px 60px rgba(0,0,0,0.60),0 4px 16px rgba(0,0,0,0.40);
+    --soft-shadow:0 4px 14px rgba(0,0,0,0.45);
+    --button-shadow:0 6px 18px rgba(183,172,155,0.18);--button-shadow-h:0 8px 22px rgba(183,172,155,0.28);
+    --emboss-color:transparent;--emboss-highlight:transparent;--emboss-shadow:transparent;
+  }
+}
+
+
+/* ============================================
+   TYPOGRAPHY — system stack only
+   [G Bab 2-3] system fonts; max 2 typefaces
+   [G Bab 4] tier hierarchy
+   [G Bab 5] 16px body, line 1.5
+   ============================================ */
+
+html { font-size: 16px !important; }
+
+body, body * {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !important;
+}
+
+body {
+  -webkit-font-smoothing: antialiased !important;
+  color: var(--text) !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+.text-xs   { font-size: 14px !important; line-height: 1.4 !important; }
+.text-sm   { font-size: 16px !important; line-height: 1.5 !important; }
+.text-base { font-size: 16px !important; line-height: 1.5 !important; }
+.text-lg   { font-size: 18px !important; line-height: 1.5 !important; }
+.text-xl   { font-size: 22px !important; line-height: 1.3 !important;
+             color: var(--text) !important; font-weight: 700 !important; }
+.text-2xl  { font-size: 26px !important; line-height: 1.2 !important;
+             color: var(--text) !important; font-weight: 700 !important; }
+.text-3xl  { font-size: 32px !important; line-height: 1.2 !important;
+             color: var(--text) !important; font-weight: 700 !important; }
+
+
+/* ============================================
+   PAGE BACKGROUND
+   - Default body bg = NEUTRAL (calm canvas for the main interface)
+   - Dramatic gradient is scoped to #auth-page only
+   - Ambient blobs removed entirely (per Krug Hukum Ketiga)
+   [Krug Bab 3 hal.31-35] hapus setengah dari kata-kata, applies to decoration too
+   [Marsh Lesson 65 hal.143-144] neutral canvas → input wins attention
+   ============================================ */
+
+body {
+  /* Same cloud language as the login page — but ~35% strength.
+     Calm atmospheric depth without competing with chat content.
+     [N] aesthetic-usability · [Krug Hukum Pertama] don't make me think */
+  background: var(--main-bg) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+
+.app, main { background: transparent !important; }
+
+
+/* ============================================
+   AUTH PAGE — TWO-LINE EMBOSSED BG TEXT
+   "DATA ANALYST" anchored top, "AGENT" anchored bottom.
+   White-space: nowrap → crops past viewport edges.
+   [G Bab 64] decoration ≠ sole meaning channel
+   [K Bab 3 hal.31-35] hierarchy: card carries attention, bg is texture
+   [G Bab 40] static
+   ============================================ */
+
+#auth-page {
+  /* Auth page restores its own dramatic gradient.
+     Main interface stays on the neutral body bg. */
+  background: var(--page-bg) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 100vh !important;
+}
+
+#auth-page > div.w-full.h-full.absolute { display: none !important; }
+#auth-container, #auth-page > div.fixed { background: transparent !important; }
+
+/* ============================================
+   ANIMATED AMBIENT ORB
+   Replaces the embossed bg text. ONE soft glowing orb that pulses
+   slowly. Pure CSS, ambient (not interactive), no sharp motion.
+   [Grant Bab 40] short, subtle, doesn't shift any interactive element
+   [N] aesthetic-usability — calm atmospheric depth
+   ============================================ */
+#auth-page::before {
+  content: '';
+  position: fixed;
+  width: clamp(420px, 55vw, 720px);
+  height: clamp(420px, 55vw, 720px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    var(--cocoa-tan) 0%,
+    var(--atmos-peach) 40%,
+    transparent 75%);
+  opacity: 0.32;
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  animation: orb-pulse 9s ease-in-out infinite;
+}
+
+.dark #auth-page::before, :root.dark #auth-page::before {
+  background: radial-gradient(circle,
+    var(--cocoa-tan) 0%,
+    rgba(106,93,82,0.20) 45%,
+    transparent 75%);
+  opacity: 0.55;
+}
+
+@keyframes orb-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: var(--orb-min, 0.28); }
+  50%      { transform: translate(-50%, -50%) scale(1.08); opacity: var(--orb-max, 0.42); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #auth-page::before { animation: none !important; }
+}
+
+
+/* ============================================
+   LOGIN CARD — GLASSMORPHISM
+   [MS hal.19] "pilihan glassmorphism"
+   [G Bab 59] post-blend ≥7:1 AAA both modes
+   [G Bab 60] visible border + shadow = card affordance
+   [P3] frosted layer = polish signal → trust
+   ============================================ */
+
+div.sm\:max-w-md, div[class*="sm:max-w-md"] {
+  background: var(--login-card-bg) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+  border: 1px solid rgba(255,255,255,0.45) !important;
+  border-radius: 22px !important;
+  padding: 44px 40px 36px !important;
+  box-shadow: var(--card-shadow) !important;
+  max-width: 460px !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 10 !important;
+  animation: card-enter 0.5s ease-out both !important;
+}
+
+.dark div.sm\:max-w-md, .dark div[class*="sm:max-w-md"],
+:root.dark div.sm\:max-w-md, :root.dark div[class*="sm:max-w-md"] {
+  border: 1px solid rgba(255,255,255,0.20) !important;
+}
+
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================
+   LOGIN TITLE — i18n-ready via CSS variables
+   Default English; override from JavaScript:
+     document.documentElement.style.setProperty('--i18n-title',
+       '"Masuk untuk melanjutkan"');
+   [G Bab 4] hierarchy by SIZE+WEIGHT
+   [G Bab 89] human voice
+   [K Bab 5] subtitle = what to do (no Welcome back)
+   ============================================ */
+
+div.mb-1 > div.text-2xl.font-medium {
+  font-size: 0 !important;
+  color: transparent !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-bottom: 28px !important;
+}
+
+div.mb-1 > div.text-2xl.font-medium::before {
+  content: var(--i18n-title, 'Data Analyst Agent') !important;
+  display: block !important;
+  font-size: 32px !important;          /* bumped from 26 */
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  text-align: center !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.015em !important;
+}
+
+div.mb-1 > div.text-2xl.font-medium::after {
+  content: var(--i18n-subtitle, 'Sign in to continue') !important;
+  display: block !important;
+  font-size: 16px !important;          /* bumped from 14 */
+  font-weight: 400 !important;
+  color: var(--text2) !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+}
+
+.dark div.mb-1 > div.text-2xl.font-medium::before,
+:root.dark div.mb-1 > div.text-2xl.font-medium::before {
+  font-size: 34px !important;          /* bumped from 28 */
+  letter-spacing: -0.02em !important;
+}
+
+
+/* ============================================
+   FORM & INPUTS
+   [G Bab 5] 16px font · [G Bab 38] never clear data
+   [G Bab 45] validate ASAP · [G Bab 60] visible border
+   [G Bab 67] persistent labels · [G Bab 69] ≥44px
+   [P2 FENIkS] immediate visual feedback layer
+   ============================================ */
+
+form.flex.flex-col.justify-center { gap: 14px !important; }
+
+input[type="text"], input[type="email"], input[type="password"],
+input[type="search"], textarea {
+  width: 100% !important;
+  padding: 13px 16px !important;
+  background: var(--input-bg) !important;
+  border: 1.5px solid var(--input-border) !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  color: var(--text) !important;
+  outline: none !important;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s !important;
+  min-height: 48px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--cocoa) !important;
+  background: rgba(255,255,255,0.85) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+  outline: none !important;
+}
+.dark input:focus, .dark textarea:focus,
+:root.dark input:focus, :root.dark textarea:focus {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: var(--powder) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+}
+
+::placeholder {
+  color: var(--text3) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+label {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--text2) !important;
+  margin-bottom: 6px !important;
+}
+
+
+/* ============================================
+   LOCAL-MODE BADGE — CSS-only fallback
+   Renders below the form even if custom.js isn't loaded.
+   custom.js (when present) hides this and replaces with a richer
+   HTML version that has a separately animated PB/sage dot.
+   Content driven by --i18n-badge so language toggle can swap it.
+   [G Bab 20] orient new admin · [G Bab 89] human voice
+   ============================================ */
+
+form.flex.flex-col.justify-center::after {
+  content: var(--i18n-badge, '\2022\00a0  Running locally \00b7 your data is safe') !important;
+  display: block !important;
+  width: -webkit-fit-content !important;
+  width: fit-content !important;
+  margin: 22px auto 0 !important;
+  padding: 9px 18px !important;
+  background: var(--powder-pale) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 999px !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  color: var(--text2) !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* When custom.js mounts the rich version, hide the CSS fallback */
+form.flex.flex-col.justify-center.has-js-badge::after {
+  display: none !important;
+}
+
+
+/* ============================================
+   PRIMARY BUTTON
+   [G Bab 7] looks like a button · [G Bab 9] click feedback
+   [G Bab 69] ≥44px · [Marsh Lesson 65] Axis of Interaction
+   [Marsh Lesson 67] distinct primary · [MS hal.6] OBVIOUS tier
+   ============================================ */
+
+button { min-height: 44px !important; }
+
+/* MEASURED BUG (v46): the rule above forced EVERY button to 44px, including
+   the small action buttons (archive / delete / "...") that live inside a chat
+   row. Measured on the running app: the row is 32px tall starting at y=272,
+   while the button became 44px starting at y=280 — so it protruded 20px below
+   its own row and read as a misaligned block of colour behind the icons.
+   Grant Ch 69 is about the PRIMARY tap targets; forcing it onto controls that
+   sit inside a fixed-height list breaks the layout it was meant to help. */
+#sidebar button,
+#sidebar [role="button"] {
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: center !important;
+}
+
+button[type="submit"] {
+  width: 100% !important;
+  padding: 14px !important;
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  cursor: pointer !important;
+  box-shadow: var(--button-shadow) !important;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
+  min-height: 50px !important;
+  margin-top: 10px !important;
+}
+
+button[type="submit"]:hover {
+  background: var(--accent2) !important;
+  box-shadow: var(--button-shadow-h) !important;
+}
+
+button[type="submit"]:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 4px 12px rgba(88,55,34,0.30) !important;
+}
+
+button[type="submit"]:focus-visible {
+  outline: none !important;
+  box-shadow: var(--button-shadow), 0 0 0 3px var(--accent-glow) !important;
+}
+
+button[type="submit"]:disabled {
+  background: #c9bba8 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode: sage button + near-black text */
+.dark button[type="submit"], :root.dark button[type="submit"] {
+  background: var(--accent) !important;
+  color: #222222 !important;
+}
+.dark button[type="submit"]:hover, :root.dark button[type="submit"]:hover {
+  background: var(--accent2) !important;
+  color: #222222 !important;
+  box-shadow: var(--button-shadow-h) !important;
+}
+.dark button[type="submit"]:active, :root.dark button[type="submit"]:active {
+  background: var(--accent-light) !important;
+  color: #222222 !important;
+}
+
+button.px-3\.5.py-1\.5.text-sm.font-medium.bg-black,
+button.px-3\.5.py-1\.5.text-sm.font-medium.dark\:bg-white {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+
+/* ============================================
+   LANGUAGE TOGGLE  ★ NEW ★
+   Top-right glass pill (INA | ENG)
+   [G Bab 7] tappable · [G Bab 24] active state visible
+   [G Bab 64] color + aria-pressed both convey state
+   ============================================ */
+
+/* Toggle is now a sibling of the top-right header actions (settings + avatar).
+   It follows the natural document flow — no fixed positioning, no z-index.
+   When the right-side panel opens, it shifts left with the rest of the header. */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--card-bg-solid);
+  border: 1px solid var(--input-border);
+  border-radius: 999px;
+  box-shadow: var(--soft-shadow);
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.lang-toggle button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  /* Was 12.5px. Moved onto the 14px meta step of the type scale. The 44px
+     clickable floor (Grant Bab 69) is set further down, in the one place that
+     owns this selector's sizing. The language switch is an EASY-tier control
+     (Grant Bab 96): used occasionally, reachable in one click, but it does not
+     compete with the composer. */
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+
+.lang-toggle button:hover { color: var(--text); }
+
+.lang-toggle button[aria-pressed="true"] {
+  background: var(--cocoa);
+  color: #FFFFFF;
+}
+
+.dark .lang-toggle button[aria-pressed="true"],
+:root.dark .lang-toggle button[aria-pressed="true"] {
+  color: #222222;
+}
+
+.lang-toggle button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+[data-i18n], [data-i18n-placeholder] { transition: opacity 0.18s ease; }
+body.lang-switching [data-i18n] { opacity: 0; }
+
+
+/* ============================================
+   TOP-RIGHT ACTION BUTTONS — bigger tap targets
+   Profile avatar, Settings/Controls sliders, Temporary chat indicator.
+   [Grant Bab 69] ≥44px tap target · [Grant Bab 32] obvious affordance
+   These selectors target Open WebUI's typical circular icon buttons
+   in the top toolbar area without affecting our own toggle.
+   ============================================ */
+
+/* MEASURED (v63): this floor was set at 40px, so #voice-input-button and the
+   voice-mode button both came out 40x40 — four pixels under the minimum Grant
+   Bab 69 sets for any clickable area, and both sit in the composer, the busiest
+   region of the screen. Raised to 44. */
+button.rounded-full:not(.lang-toggle button):not([type="submit"]):not(#send-message-button),
+button[class*="rounded-full"]:not(.lang-toggle button):not([type="submit"]):not(#send-message-button) {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  /* MEASURED BUG (v64): the two rules above enlarge the box, but these buttons
+     are display:block with a fixed 6px padding, so the icon stayed where its
+     padding put it instead of re-centring in the bigger box. Measured on the
+     running app: #voice-input-button and the voice-mode button are 44x44 and
+     their icon centres sit exactly 5px LEFT of the button centre — which is
+     what makes a round button look crooked. Enlarging a target without
+     re-centring its content is my own fault, not Open WebUI's.
+     [Grant Bab 69] a target is the whole circle, so the icon belongs at its
+     centre; [Grant Bab 7] a button must read as a deliberate object */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+button.rounded-full svg,
+button[class*="rounded-full"] svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* MEASURED (v63): this later rule was silently undoing the 44px floor set on
+   .lang-toggle button earlier in the file. The buttons measured 37px high in
+   the running app while the source appeared to ask for 44. Two rules for the
+   same selector in one stylesheet is the fault; the size now lives here only. */
+.lang-toggle button {
+  min-height: 44px !important;
+  min-width: 56px !important;
+}
+.lang-toggle img { min-width: 0 !important; min-height: 0 !important; }
+#send-message-button svg { width: 18px !important; height: 18px !important; }
+
+/* No panel-hide rules needed — the toggle is now an inline header
+   sibling and shifts with the rest of the layout when panels open. */
+
+
+/* Open WebUI renders the chat timestamps at 10px (Tailwind's text-[10px]).
+   Measured on the running app: 25 elements at that size. Grant Ch 5 puts the
+   readable baseline at 16px for body copy; 10px is well under what secondary
+   metadata should be, and this list is scanned constantly. Raised to 12px,
+   which stays clearly subordinate without becoming unreadable. */
+/* TYPE SCALE FLOOR (v62). Open WebUI sprinkles one-off Tailwind sizes through
+   the chrome: measured 10px, 11.2px (text-[0.7rem]) and 12px on the same
+   screen. Each extra size is another step the eye has to rank, against a
+   framework that allows three, and 11.2px is below what secondary text should
+   ever be. All of them are pulled onto the 14px meta step.
+   [Krug Bab 3 / Grant Bab 4-5] maksimal 3 tingkatan ukuran teks
+   [Grant Bab 5] there is a floor below which text stops being readable
+   The sidebar is excluded: overriding its sizes has broken its layout before,
+   and restyling it was never part of this work. */
+[class*="text-[10px]"]:not(#sidebar *),
+[class*="text-[11px]"]:not(#sidebar *),
+[class*="text-[0.7rem]"]:not(#sidebar *),
+[class*="text-[0.75rem]"]:not(#sidebar *) {
+  font-size: 14px !important;
+}
+
+/* MEASURED (v57): the message timestamps inside the conversation were still
+   rendering at 10.4px. They come from a relative Tailwind size, not the
+   literal text-[10px] class the rule above targets, so they were missed.
+   Same reasoning as above: metadata may be subordinate, not unreadable.
+   [Grant Bab 5] there is a floor below which text stops being text */
+#messages-container .line-clamp-1,
+#messages-container time,
+#messages-container [class*="text-[0."] {
+  font-size: 14px !important;
+}
+
+/* MEASURED CONTRAST FAILURES INSIDE THE CONVERSATION (v59).
+   Auditing the running app with a canvas-based colour resolver (so oklch is
+   read as the browser paints it, not guessed) gave these ratios against the
+   cocoa background:
+       "Today at 3:02 PM"    oklch(0.77)  ->  2.07 : 1
+       "Retrieved 1 source"  oklch(0.69)  ->  2.78 : 1
+       "742.0 B" (file size) oklch(0.69)  ->  2.78 : 1
+   WCAG 2.1 AA requires 4.5 : 1 for text this size, so all three fail, and this
+   is the real reason the row reads as faint rather than merely small: the body
+   text next to it measures 8.45 : 1.
+   The replacements are the same two tones already used for the sidebar
+   metadata, measured at 5.17 : 1 (light) and 6.85 : 1 (dark). They stay clearly
+   subordinate to the answer while becoming legible.
+   [Grant Bab 59] contrast is a requirement, not a stylistic preference
+   [Grant Bab 4] hierarchy comes from weight and colour, not from illegibility */
+#messages-container .line-clamp-1,
+#messages-container [class*="text-gray-400"],
+#messages-container [class*="text-gray-500"],
+#messages-container [class*="text-gray-600"] {
+  color: #7A5F45 !important;
+}
+
+.dark #messages-container .line-clamp-1,
+.dark #messages-container [class*="text-gray-400"],
+.dark #messages-container [class*="text-gray-500"],
+.dark #messages-container [class*="text-gray-600"],
+:root.dark #messages-container .line-clamp-1,
+:root.dark #messages-container [class*="text-gray-400"],
+:root.dark #messages-container [class*="text-gray-500"],
+:root.dark #messages-container [class*="text-gray-600"] {
+  color: #A79E92 !important;
+}
+
+/* VISUAL HIERARCHY OF THE MESSAGE HEADER (v60).
+   The model name is the heading of the message block: it says who is speaking
+   and it is what the eye should land on when scanning a long conversation.
+   Open WebUI renders it at 13px, SMALLER than the 16px answer it introduces,
+   which inverts the hierarchy — a heading cannot be the least prominent thing
+   in its own block.
+   The ladder is therefore set explicitly:
+       17px / 700   model name        (heading)
+       16px / 400   the answer        (body)
+       14px / 400   time, source line (metadata)
+   Metadata deliberately stays below body size: a timestamp that competed with
+   the answer would be a second inversion in the other direction.
+   [Grant Bab 4] size and weight must follow importance
+   [Grant Bab 3] a type scale needs distinct, deliberate steps
+   [Krug Bab 3] a heading must look like it belongs to what it heads */
+#messages-container .line-clamp-1[class*="text-black"] {
+  color: var(--text) !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+#messages-container .line-clamp-1:not([class*="text-black"]),
+#messages-container [class*="text-gray-500"],
+#messages-container [class*="text-gray-400"] {
+  font-size: 14px !important;
+}
+
+/* MEASURED CONTRAST FAILURES (v51).
+   Auditing the running app with a proper oklch-to-sRGB conversion found 28
+   text/background pairs below WCAG AA, all of them Open WebUI's own sidebar
+   metadata:
+     · chat timestamps  oklch(0.77) on #F5EFE5  ->  ratio 1.75  (needs 4.5)
+     · date group labels oklch(0.69) on #F5EFE5 ->  ratio 2.34  (needs 4.5)
+   A ratio of 1.75 is barely visible. Recolouring them to the cocoa palette
+   lifts both above the threshold with measured headroom:
+     · light mode #7A5F45 -> 5.17
+     · dark  mode #A79E92 -> 6.85
+   [Grant Ch 59] contrast ratios are your friend · [WCAG 2.1 SC 1.4.3] */
+#sidebar [class*="text-gray-400"],
+#sidebar [class*="text-gray-500"],
+[class*="text-[10px]"][class*="text-gray"] {
+  color: #7A5F45 !important;
+}
+
+.dark #sidebar [class*="text-gray-400"],
+.dark #sidebar [class*="text-gray-500"],
+:root.dark #sidebar [class*="text-gray-400"],
+:root.dark #sidebar [class*="text-gray-500"],
+.dark [class*="text-[10px]"][class*="text-gray"],
+:root.dark [class*="text-[10px]"][class*="text-gray"] {
+  color: #A79E92 !important;
+}
+
+
+/* ============================================
+   SIDEBAR  (v35 — deliberately minimal)
+
+   Earlier versions overrode font sizes, row heights, paddings, icon sizes,
+   white-space, hover states and image dimensions here. Each override fought
+   Open WebUI's own layout and produced a new defect: stacked hover panels,
+   ragged row heights, a squashed logo, cramped text and stray gaps.
+
+   Open WebUI's sidebar is already a competent, tested layout. Restyling it was
+   never a project requirement, so the customisation is reduced to the ONE
+   thing the research actually calls for: keeping the surface consistent with
+   the theme, and removing navigation that is irrelevant to data analysis
+   (handled in the block below).
+   [Krug Hukum Pertama] don't make me think — leave working navigation alone
+   [Grant Bab 4] secondary surfaces should recede, not be redesigned
+   ============================================ */
+
+#sidebar {
+  background: var(--neutral-soft) !important;
+  border-right: 1px solid var(--neutral-border) !important;
+}
+
+
+/* A chat row's own action button ("...") carried its own background, so it sat
+   on a slightly different shade than the row highlight behind it and looked
+   misaligned. Letting the row's background show through fixes the seam.
+   [Krug Bab 3] one element, one visual surface */
+#sidebar a button,
+#sidebar [role="button"] button,
+#sidebar a [role="button"],
+#sidebar li button {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+
+/* ============================================
+   SIDEBAR — HIDE NON-ESSENTIAL ITEMS
+   Keep: New Chat (+ Search if shown). Hide: Notes, Workspace.
+   [Krug Bab 1 hal.11] don't show what users don't need right now
+   [Grant Bab 26] hide advanced/secondary functions
+   Multiple selector patterns to catch Open WebUI's variations.
+   If your build uses different attributes, inspect and add a rule.
+   ============================================ */
+
+/* Notes */
+#sidebar a[href*="notes" i],
+#sidebar a[href$="/notes"],
+#sidebar [aria-label*="Notes" i],
+#sidebar button[id*="notes" i],
+#sidebar [data-testid*="notes" i] { display: none !important; }
+
+/* Workspace */
+#sidebar a[href*="workspace" i],
+#sidebar a[href$="/workspace"],
+#sidebar [aria-label*="Workspace" i],
+#sidebar button[id*="workspace" i],
+#sidebar [data-testid*="workspace" i] { display: none !important; }
+
+
+/* ============================================
+   MODEL SELECTOR — "AI Assistant (model-id)"
+   Inject "AI Assistant" as primary text via ::before;
+   the existing model-id stays but reads as smaller/muted.
+   [Grant Bab 89] write like a human — non-tech users see "AI Assistant"
+   [Grant Bab 4] hierarchy: human label dominant, model-id parenthetical
+   [Grant Bab 26] hide technical info from most users — model-id remains
+                  but visually subordinate
+   If your Open WebUI version uses different attributes for the
+   model picker, inspect the element and tweak the selector group.
+   ============================================ */
+
+button[aria-label*="Select" i][aria-label*="model" i],
+button[id*="model-selector" i],
+[class*="model-selector"] button,
+button[aria-haspopup][class*="model" i] {
+  position: relative !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: var(--text2) !important;
+  letter-spacing: 0 !important;
+  padding-left: 14px !important;
+}
+
+button[aria-label*="Select" i][aria-label*="model" i]::before,
+button[id*="model-selector" i]::before,
+[class*="model-selector"] button::before,
+button[aria-haspopup][class*="model" i]::before {
+  content: 'AI Assistant';
+  margin-right: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.005em;
+}
+
+/* Wrap the existing model id in parentheses visually using ::after
+   on the inner text element. If parens already render in your build,
+   remove this rule. */
+button[aria-label*="Select" i][aria-label*="model" i] > span,
+button[id*="model-selector" i] > span,
+[class*="model-selector"] button > span {
+  font-size: 13px !important;
+  color: var(--text2) !important;
+  font-weight: 400 !important;
+}
+
+
+/* ============================================
+   CHAT PAGE
+   ============================================ */
+
+main [class*="group"] {
+  padding-top: 18px !important;          /* slightly more breath between messages */
+  padding-bottom: 18px !important;
+}
+
+.assistant-message, main [class*="prose"] {
+  font-size: 16px !important;
+  line-height: 1.65 !important;          /* easier long-read */
+  color: var(--text) !important;
+}
+
+div[class*="sticky"][class*="top-0"] { padding: 8px 12px !important; }
+
+
+/* ============================================
+   SEND BUTTON
+   ============================================ */
+
+#send-message-button {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  box-shadow: var(--button-shadow) !important;
+  transition: background 0.15s, box-shadow 0.15s !important;
+}
+
+#send-message-button:hover {
+  background: var(--accent2) !important;
+  box-shadow: var(--button-shadow-h) !important;
+}
+
+.dark #send-message-button, :root.dark #send-message-button { color: #222222 !important; }
+
+
+/* ============================================
+   CHAT INPUT — glass
+   ============================================ */
+
+/* Chat input — the OBVIOUS-tier action; visual weight from clarity not decoration.
+   Visually rhymes with the login card (radius + soft elevation) without using glass.
+   [Marsh Lesson 65 hal.143-144] Axis of Interaction
+   [MS hal.6] OBVIOUS tier · [Grant Bab 60] single hairline affordance */
+form > div:has(textarea),
+div[class*="bg-"][class*="rounded-"]:has(textarea) {
+  background: var(--card-bg-solid) !important;
+  border: 1px solid var(--neutral-border) !important;
+  border-radius: 20px !important;        /* matches login card visual rhythm */
+  box-shadow:
+    0 1px 2px rgba(64,45,33,0.04),
+    0 8px 22px rgba(64,45,33,0.06) !important;
+  transition: border-color 0.18s, box-shadow 0.18s !important;
+}
+
+form > div:has(textarea):focus-within {
+  border-color: var(--accent) !important;
+  box-shadow:
+    0 0 0 3px var(--accent-glow),
+    0 8px 20px rgba(64,45,33,0.05) !important;
+}
+
+
+/* ============================================
+   CHAT BLANK SLATE
+   ============================================ */
+
+/* TipTap / ProseMirror chat input placeholder override.
+   Open WebUI shows the placeholder via ::before on the empty paragraph.
+   We replace its content with our localized string, set as a CSS var by JS.
+   [Grant Bab 67] persistent placeholder; [Grant Bab 89] human voice */
+/* The placeholder was scoped to #chat-input only. When Open WebUI renders the
+   editor without that id (or nests it differently) nothing matched and the
+   composer sat completely empty, with no hint of what to type.
+   These selectors also cover the plain TipTap/ProseMirror structure. */
+#chat-input p.is-editor-empty:first-child::before,
+#chat-input p:first-child:empty::before,
+#chat-input p[data-placeholder]:first-child::before,
+.ProseMirror p.is-editor-empty:first-child::before,
+[contenteditable="true"] p.is-editor-empty:first-child::before,
+[contenteditable="true"] p[data-placeholder]:first-child::before {
+  content: var(--i18n-chat-ph, 'Upload your file or state your request…') !important;
+  color: var(--text3) !important;
+  pointer-events: none !important;
+  /* ROOT CAUSE, found by measuring the running app (v58): this rule used to
+     force `height: 0` and `float: left`, copied from TipTap's own placeholder
+     recipe. Open WebUI positions its placeholder with `position: absolute`
+     instead, and an absolutely positioned box with a forced zero height paints
+     nothing. Measured: content was correctly set to "Ask another question about
+     this dataset…" while the composer looked completely empty.
+     That invisible placeholder is also why an overlaid <span> was added in an
+     earlier version, which in turn produced the two-placeholders-swapping bug.
+     Removing these two declarations fixes both at once. */
+}
+
+
+/* Custom blank slate — title + subtitle injected by custom.js as .daa-blank.
+   When .daa-blank exists, we hide Open WebUI's default greeting + suggestions
+   so there's only one source of truth.
+   [Krug Bab 5 hal.45-46] hapus happy talk
+   [Grant Bab 89] human voice; [Grant Bab 20] orient new user
+   [Grant Bab 4] hierarchy: title bold, subtitle normal + muted */
+
+/* When custom blank slate is mounted, hide Open WebUI's default greeting + suggestions.
+   Selectors are TIGHT to avoid hiding the chat input wrapper or other UI. */
+
+/* Default greeting heading */
+body.daa-custom-blank h1[class*="text-3xl"]:not(.daa-blank-title),
+body.daa-custom-blank h2[class*="text-3xl"]:not(.daa-blank-title),
+body.daa-custom-blank div[class*="text-3xl"]:not(.daa-blank-title):not(:has(.daa-blank-title)):not(:has(textarea)):not(:has(#chat-input)) {
+  display: none !important;
+}
+
+/* Default suggestion cards — Open WebUI uses a button or anchor with
+   the literal "Suggestion" word in its class. Don't catch input wrappers. */
+body.daa-custom-blank button.suggestion,
+body.daa-custom-blank a.suggestion,
+body.daa-custom-blank button[class*="suggestion-"]:not(.daa-sug),
+body.daa-custom-blank a[class*="suggestion-"]:not(.daa-sug) {
+  display: none !important;
+}
+
+/* The "Suggested" label/section header — only target headings, not inputs */
+body.daa-custom-blank > * h2:has(svg),
+body.daa-custom-blank > * h3:has(svg),
+body.daa-custom-blank > * div[class*="text-base"][class*="font-medium"]:has(> svg + *) {
+  display: none !important;
+}
+
+/* Hide the custom blank slate when actual chat messages are rendered.
+   Uses :has() — well-supported in Chrome/Safari/Edge/Firefox 121+.
+   This way JS can blindly inject; CSS controls visibility. */
+body.daa-has-messages .daa-preview,
+body.daa-has-messages .daa-blank,
+body.daa-has-messages .daa-suggestions,
+body:has(.user-message) .daa-blank,
+body:has(.user-message) .daa-suggestions,
+body:has(.assistant-message) .daa-blank,
+body:has(.assistant-message) .daa-suggestions,
+body:has([data-message-id]) .daa-blank,
+body:has([data-message-id]) .daa-suggestions {
+  display: none !important;
+}
+
+/* Custom blank slate container — sits centered above the input */
+/* One centred column with a SHARED max width. The blank slate, the quick
+   actions and the caption used to be laid out independently (540px / 720px /
+   full width), so their edges never lined up and the group read as three
+   loose pieces instead of one block.
+   [Grant Bab 4] a consistent measure creates a visible hierarchy
+   [Krug Bab 3] group related things and align them */
+.daa-blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+  text-align: center;
+  max-width: 620px;
+}
+
+.daa-blank-title {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+/* TYPE SCALE (v62). Measured on the running app, the interface used SEVEN
+   distinct text sizes on a single screen: 28, 16, 15, 13, 12.5, 12 and 11.2px.
+   The framework allows three:
+     "Gunakan maksimal 3 tingkatan ukuran teks. Jika semua terlihat sama
+      pentingnya, tidak ada yang menonjol."  (Krug Bab 3; Grant Bab 4-5)
+   The scale is now defined once and reused everywhere:
+     28px / 600   display   blank-slate title only
+     17px / 700   heading   message author, section headings in a report
+     16px / 400   body      all reading text, line-height 1.5 (Grant Bab 5)
+     14px         meta      timestamps, source line, chips, controls
+   Display and heading never appear on the same screen, so no screen shows
+   more than three sizes. That is a claim that can be verified by measurement
+   rather than asserted. */
+.daa-blank-subtitle {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: var(--text2) !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+  opacity: 0.85;
+}
+
+/* Custom suggestion row — sits below the input, secondary visual weight */
+.daa-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 14px auto 0;
+  padding: 0 16px;
+  max-width: 620px;          /* same measure as .daa-blank */
+}
+
+/* Quick actions and suggestion chips.
+   MEASURED (v62): 40px tall. These are OBVIOUS-tier controls in Grant's
+   Obvious / Easy / Possible hierarchy (Bab 96) — "Unggah file" and "Coba
+   contoh dataset" are the two things a first-time user is meant to do — and
+   Grant Bab 69 puts the floor for any clickable area at 44x44px, including on
+   a touchscreen laptop. Raised to 44px and moved onto the 14px meta step of
+   the type scale. */
+.daa-sug {
+  appearance: none;
+  border: 1px solid var(--neutral-border);
+  background: transparent;
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  font-family: inherit;
+  opacity: 0.85;
+  min-height: 44px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Open WebUI's own button styles reach the text node inside our chips, which
+   measured 13px while the button itself was 14px. One size per control. */
+.daa-sug > *,
+.daa-followup-sug > * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.daa-sug:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--hover);
+  opacity: 1;
+}
+
+.daa-sug:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  border-color: var(--accent);
+}
+
+/* ============================================
+   COMPOSER PLACEHOLDER  (v38)
+   Rendered by custom.js because the editor's built-in placeholder never
+   appeared in this build, leaving the input blank and unexplained.
+   [Grant Bab 67] a field should always say what belongs in it
+   ============================================ */
+
+/* Position and typography are measured from the editor by custom.js so the
+   placeholder sits exactly on the caret's baseline. Fixed offsets were used
+   before and left a visible gap between the caret and the hint text. */
+.daa-placeholder {
+  position: absolute;
+  max-width: calc(100% - 90px);
+  pointer-events: none;
+  user-select: none;
+  color: var(--text3);
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================
+   SAMPLE OUTPUT IN CAPABILITY PANEL  ·  Grant Ch 84
+   "Show, don't tell": a miniature of the real output communicates the system's
+   purpose faster than a description of it. Small on purpose so the panel stays
+   scannable. [Krug Bab 3]
+   ============================================ */
+
+.daa-example { margin-top: 10px; }
+
+.daa-example-cap {
+  margin: 0 0 6px !important;
+  font-size: 14px !important;
+  color: var(--text3) !important;
+}
+
+.daa-example-body {
+  padding: 12px;
+  border: 1px dashed var(--neutral-border);
+  border-radius: 10px;
+}
+
+.daa-example-file {
+  margin: 0 0 2px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+
+.daa-example-finding {
+  margin: 0 0 6px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--text2) !important;
+}
+
+.daa-example-chartlabel {
+  margin: 10px 0 4px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--text2) !important;
+}
+
+.daa-example-note {
+  margin: 0 0 8px !important;
+  font-size: 14px !important;
+  font-style: italic;
+  color: var(--text3) !important;
+}
+
+.daa-example-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.daa-example-table {
+  border-collapse: collapse !important;
+  font-size: 14px !important;
+  background: transparent !important;
+  width: auto !important;
+}
+
+.daa-example-table th {
+  border-bottom: 1px solid var(--neutral-border) !important;
+  background: transparent !important;
+  color: var(--text3) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-size: 14px !important;
+  padding: 2px 10px 4px 0 !important;
+  border: none !important;
+}
+
+/* Numeric columns align right so digits line up and can be compared by eye,
+   the standard convention for figures. [Grant Bab 4] */
+.daa-example-table th.num, .daa-example-table td.num { text-align: right !important; }
+
+.daa-example-table td {
+  padding: 2px 10px 2px 0 !important;
+  border: none !important;
+  color: var(--text2) !important;
+  font-size: 14px !important;
+}
+
+/* Miniature bar chart. Height alone carries the comparison, and the group has
+   an aria-label, so nothing depends on colour. [Grant Ch 64] */
+.daa-example-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 46px;
+  padding-bottom: 2px;
+}
+
+.daa-example-chart span {
+  display: block;
+  width: 12px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+
+/* ============================================
+   UNDO TOAST  ·  Grant Ch 15
+   Detaching a dataset throws away the schema, prompts and preview, so it gets
+   a short window in which the action can be reversed. Anchored to a corner so
+   it never displaces anything the user is about to click. [Grant Ch 40]
+   ============================================ */
+
+/* Lower-left, the Material Design convention for a desktop snackbar. It is the
+   only region this layout leaves free (centred composer, top-right header), so
+   it never covers content or the control the user reaches for next.
+   Exact offsets are set by custom.js so it clears the sidebar. */
+.daa-undo {
+  position: fixed;
+  z-index: 9997;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 18px;
+  border: 1px solid var(--neutral-border);
+  border-radius: 999px;
+  background: var(--card-bg-solid);
+  box-shadow: var(--card-shadow);
+  font-size: 14px;
+  color: var(--text2);
+  animation: daa-fade-in 0.2s ease-out both;
+}
+
+.daa-undo-btn {
+  appearance: none;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--text) !important;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: auto !important;
+}
+
+.daa-undo-btn:hover { background: var(--hover); }
+
+.daa-undo-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+
+/* ============================================
+   DRAG & DROP TARGET  ·  Grant Ch 54
+   Dropping a file already worked, but nothing said so. This makes the
+   capability visible the moment a file is dragged over the window.
+   ============================================ */
+
+.daa-dropzone {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;          /* never block the actual drop */
+  animation: daa-fade-in 0.15s ease-out both;
+}
+
+.daa-dropzone-inner {
+  padding: 30px 44px;
+  border: 2px dashed var(--accent);
+  border-radius: 18px;
+  background: var(--card-bg-solid);
+  text-align: center;
+  box-shadow: var(--card-shadow);
+}
+
+.daa-dropzone-title {
+  margin: 0 0 4px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+
+.daa-dropzone-sub {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--text3) !important;
+}
+
+
+/* ============================================
+   REPORT READABILITY  ·  Grant Ch 4, Ch 5, Krug Bab 3   (v45)
+   A DAAT report is dense: narrative, findings, a figures table and charts.
+   Without a visible hierarchy the reader has to process every line to find the
+   numbers. These rules give the report the same three-tier structure the rest
+   of the interface uses, without touching the content itself.
+   ============================================ */
+
+/* Section titles inside a report.
+   v64: these used three sizes of their own (20, 17, 15px), which pushed the
+   conversation screen to five text sizes against a framework that allows
+   three. The levels are now separated by WEIGHT and SPACING instead: both tiers
+   sit on the scale, and the deeper one drops to body size while staying bold.
+   Nothing about the structure is lost, and the screen stays within the scale.
+   [Grant Bab 4] hierarchy from size AND weight, not size alone
+   [Krug Bab 3] maksimal 3 tingkatan ukuran teks */
+.assistant-message h1, [class*="prose"] h1,
+.assistant-message h2, [class*="prose"] h2 {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  margin: 20px 0 8px !important;
+  color: var(--text) !important;
+}
+
+.assistant-message h3, .assistant-message h4,
+[class*="prose"] h3, [class*="prose"] h4 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  margin: 14px 0 4px !important;
+  color: var(--text) !important;
+}
+
+/* Findings read as a scannable list rather than a wall of text. [Krug Bab 3] */
+.assistant-message li, [class*="prose"] li {
+  margin: 5px 0 !important;
+  line-height: 1.6 !important;
+}
+
+/* Wide figure tables scroll on their own instead of stretching the message. */
+.daa-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0;
+  border: 1px solid var(--neutral-border);
+  border-radius: 10px;
+}
+
+.daa-table-wrap table {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Numeric columns are right-aligned by custom.js so digits line up and can be
+   compared down the column — the standard convention for figures.
+   Tabular figures keep every digit the same width. */
+.daa-num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Row separation for scanning long tables. [Krug Bab 3] */
+.assistant-message tbody tr:nth-child(even) td,
+[class*="prose"] tbody tr:nth-child(even) td {
+  background: var(--hover) !important;
+}
+
+/* Charts returned by the backend, framed so they read as figures. */
+.assistant-message img, [class*="prose"] img {
+  border-radius: 10px;
+  border: 1px solid var(--neutral-border);
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* ============================================
+   SKIP LINK  ·  Grant Ch 63
+   Hidden until focused, so it serves keyboard and screen-reader users without
+   changing what sighted users see.
+   ============================================ */
+
+.daa-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  padding: 10px 16px;
+  background: var(--card-bg-solid) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--accent);
+  border-radius: 0 0 10px 0;
+  font-size: 14px;
+  text-decoration: none !important;
+}
+
+.daa-skip:focus {
+  left: 0;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+
+/* ============================================
+   ANALYSIS PROGRESS & COMPLETION  ·  Grant Ch 55, 56, 70
+   One indicator for the whole operation, labelled in the user's language, with
+   an explicit end state so the journey visibly closes.
+   ============================================ */
+
+.daa-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 620px;              /* same measure as the rest of the group */
+  margin: 0 auto 10px;
+  padding: 7px 14px;
+  border: 1px solid var(--neutral-border);
+  border-radius: 999px;
+  background: var(--card-bg-solid);
+  font-size: 14px;
+  color: var(--text2);
+  animation: daa-fade-in 0.25s ease-out both;
+}
+
+/* Indeterminate spinner: motion signals "working", the text carries the
+   meaning, so the state never depends on the animation alone. [Grant Ch 64] */
+.daa-progress::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--neutral-border);
+  border-top-color: var(--accent);
+  animation: daa-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+.daa-progress.is-done { color: var(--text); }
+
+.daa-progress.is-done::before {
+  content: '\2713';             /* check mark */
+  border: none;
+  animation: none;
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1;
+  width: auto;
+  height: auto;
+}
+
+@keyframes daa-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .daa-progress::before { animation: none !important; }
+}
+
+
+/* ============================================
+   DATASET PREVIEW & VALIDATION  (v39)
+   Confirms what the system actually read from the file, so the upload stops
+   being a silent step the user has to trust.
+   [Amershi et al. 2019] make clear what the system has understood
+   [Grant Bab 4] supporting detail sits below the heading, at lower weight
+   ============================================ */
+
+.daa-preview {
+  margin: 10px auto 0;
+  max-width: 620px;   /* same measure as .daa-blank */
+  text-align: center;
+}
+
+.daa-preview-line {
+  margin: 0 0 8px !important;
+  font-size: 14px !important;
+  color: var(--text3) !important;
+  letter-spacing: 0.01em;
+}
+
+.daa-preview-cols {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Expanded state for wide datasets: bounded height with its own scroll, so a
+   100-column file lists everything without pushing the input off screen.
+   [Marsh Lesson 65] the composer must keep the Axis of Interaction */
+.daa-preview-cols.is-expanded {
+  max-height: 132px;
+  overflow-y: auto;
+  padding: 6px 4px;
+  border: 1px solid var(--neutral-border);
+  border-radius: 12px;
+}
+
+/* Very long column names must not stretch a chip across the row. */
+.daa-col {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.daa-col-more {
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text) !important;
+  border-color: var(--accent) !important;
+  min-height: auto !important;
+}
+
+.daa-col-more:hover { background: var(--hover); }
+
+.daa-col-more:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.daa-col-more::after { content: none !important; }
+
+/* Column type is conveyed by a text suffix as well as tint, so the meaning
+   never depends on colour alone. [Grant Bab 64] · [WCAG 1.4.1] */
+.daa-col {
+  font-size: 14px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--neutral-border);
+  color: var(--text2);
+  background: transparent;
+  white-space: nowrap;
+}
+
+.daa-col-number::after { content: ' · 123'; opacity: 0.6; }
+.daa-col-date::after   { content: ' · date'; opacity: 0.6; }
+.daa-col-text::after   { content: ' · abc'; opacity: 0.6; }
+
+.daa-preview-warn {
+  margin: 8px 0 0 !important;
+  font-size: 14px !important;
+  color: var(--text2) !important;
+  opacity: 0.9;
+}
+
+/* ============================================
+   QUICK ACTIONS  (v29)
+   Before a dataset exists, example prompts cannot be acted on, so the blank
+   slate offers actions instead: bring data in, try a sample, or see what DAAT
+   can do.
+   All three share ONE treatment. A single filled button beside two outlined
+   ones read as an accident rather than a hierarchy, so emphasis now comes from
+   ORDER and position instead of one odd colour.
+   [Grant Bab 7] a button should look like a button
+   [Krug Bab 3] consistent things should look consistent
+   [Amershi et al. 2019] make system capability discoverable
+   ============================================ */
+
+.daa-quickactions {
+  align-items: center;
+  gap: 10px;
+}
+
+/* Dedicated tokens. --powder-soft is only 8% opacity in dark mode, so the
+   buttons came out looking uncoloured. These give a tint that is actually
+   visible on BOTH backgrounds while staying inside the cocoa/sage palette. */
+.daa-quickactions {
+  --qa-bg:        #F3E7DB;
+  --qa-bg-hover:  #EBD9C8;
+  --qa-border:    rgba(64,45,33,0.24);
+}
+
+.dark .daa-quickactions, :root.dark .daa-quickactions {
+  --qa-bg:        rgba(183,172,155,0.18);
+  --qa-bg-hover:  rgba(183,172,155,0.30);
+  --qa-border:    rgba(183,172,155,0.40);
+}
+
+/* MEASURED (v64): this rule is more specific than .daa-sug, so it was quietly
+   pulling the quick actions back to 13px after the type scale set them to 14.
+   Same class of fault as the two competing .lang-toggle rules found earlier:
+   the source file asked for one thing and the browser rendered another.
+   Size and padding now come from .daa-sug alone; this rule keeps only the
+   colours that are specific to the quick-action group. */
+.daa-quickactions .daa-sug {
+  background: var(--qa-bg) !important;
+  border: 1px solid var(--qa-border) !important;
+  color: var(--text) !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s !important;
+}
+
+.daa-quickactions .daa-sug:hover {
+  background: var(--qa-bg-hover) !important;
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+}
+
+.daa-quickactions .daa-sug:active { transform: translateY(1px); }
+
+.daa-quickactions .daa-sug:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  border-color: var(--accent) !important;
+}
+
+/* The format hint is a caption, not a fourth action, so it takes its own row.
+   [Grant Bab 4] supporting text sits below, at lower weight */
+.daa-formats {
+  flex-basis: 100%;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px !important;
+  color: var(--text3) !important;
+  opacity: 0.75;
+}
+
+/* Capability panel — plain-language answer to "what can DAAT do?" */
+.daa-capab {
+  max-width: 520px;
+  margin: 14px auto 0;
+  padding: 16px 20px;
+  background: var(--card-bg-solid);
+  border: 1px solid var(--neutral-border);
+  border-radius: 16px;               /* echoes the login card + chat input */
+  box-shadow: var(--soft-shadow);
+  text-align: left;
+  animation: daa-fade-in 0.28s ease-out both;
+}
+
+.daa-capab-title {
+  margin: 0 0 8px !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+}
+
+.daa-capab-list {
+  margin: 0 0 10px !important;
+  padding-left: 18px !important;
+  list-style: disc !important;
+}
+
+.daa-capab-list li {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--text2) !important;
+  margin: 4px 0 !important;
+}
+
+.daa-capab-close {
+  appearance: none;
+  border: 1px solid var(--neutral-border);
+  background: transparent;
+  color: var(--text2);
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: auto !important;
+  font-family: inherit;
+}
+
+.daa-capab-close:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--hover);
+}
+
+body.daa-has-messages .daa-capab,
+body:has(.user-message) .daa-capab,
+body:has(.assistant-message) .daa-capab,
+body:has([data-message-id]) .daa-capab { display: none !important; }
+
+
+/* ============================================
+   FOLLOW-UP PROMPT ASSISTANCE  (v29)
+   Rendered INSIDE the conversation, in the place Open WebUI uses for its own
+   follow-up list (which we hide). It therefore scrolls with the content and
+   never covers the report, and it only exists once the answer is complete.
+   [Marsh Lesson 65] the composer keeps the Axis of Interaction
+   [Krug Bab 3] label above, items below = one group
+   ============================================ */
+
+.daa-followup {
+  margin: 4px 0 8px;
+  animation: daa-fade-in 0.28s ease-out both;
+}
+
+/* MEASURED (v58): at 12px and --text3 with 0.85 opacity this label sat below
+   the "Retrieved 1 source" metadata in visual weight, even though it introduces
+   a group of controls rather than a footnote. Raised one step and given the
+   secondary text colour at full opacity, so the ladder reads
+   16px answer > 13px group label > 13px metadata.
+   [Grant Bab 4] hierarchy must match importance, not just look layered */
+.daa-followup-hint {
+  margin: 14px 0 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--text2) !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  opacity: 1;
+}
+
+.daa-followup-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Same filled treatment as the quick actions. At 0.9 opacity on a transparent
+   background these chips read as disabled rather than available, and they no
+   longer matched the pills on the welcome screen.
+   [Krug Bab 3] consistent things should look consistent
+   [Grant Ch 7] a button should look like a button */
+.daa-followup {
+  --qa-bg:       #F3E7DB;
+  --qa-bg-hover: #EBD9C8;
+  --qa-border:   rgba(64,45,33,0.24);
+}
+
+.dark .daa-followup, :root.dark .daa-followup {
+  --qa-bg:       rgba(183,172,155,0.18);
+  --qa-bg-hover: rgba(183,172,155,0.30);
+  --qa-border:   rgba(183,172,155,0.40);
+}
+
+.daa-followup-sug {
+  font-size: 14px !important;      /* meta step of the type scale (v62) */
+  padding: 10px 16px !important;
+  opacity: 1 !important;
+  background: var(--qa-bg) !important;
+  border: 1px solid var(--qa-border) !important;
+  color: var(--text) !important;
+}
+
+.daa-followup-sug:hover {
+  background: var(--qa-bg-hover) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Download menu. Four explicit choices instead of two dropdowns, so a user who
+   scans rather than reads can pick in one glance (Krug Bab 4, satisficing).
+   Dismissible with a click outside or Escape (Grant Bab 15). */
+.daa-dlmenu {
+  position: absolute;
+  z-index: 10002;
+  margin-top: 6px;
+  min-width: 260px;
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--card-bg-solid);
+  border: 1px solid var(--neutral-border);
+  box-shadow: 0 10px 34px rgba(0,0,0,0.16);
+  animation: daa-fade-in 0.16s ease-out both;
+}
+
+.daa-dlmenu-cap {
+  margin: 4px 8px 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--text2) !important;
+}
+
+.daa-dlmenu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text) !important;
+  font-family: inherit;
+  font-size: 14px !important;
+  padding: 11px 12px !important;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 44px !important;
+}
+
+.daa-dlmenu-item:hover { background: var(--hover); }
+
+.daa-dlmenu-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.daa-report-row { position: relative; }
+
+/* ============================================
+   EXPLANATORY FEEDBACK STRIP  (v63)
+   Ruiz et al. (2020): explanatory feedback beats corrective feedback,
+   p < 0.01, Cohen's d = 0.87. Grant Bab 56: show the interpretation before
+   the user spends time on an answer built from a misreading.
+   Sits BELOW the composer so the box being typed into never moves
+   (Grant Bab 40), on the 14px meta step of the type scale.
+   ============================================ */
+.daa-interpret {
+  max-width: 860px;
+  margin: 8px auto 0 !important;
+  padding: 0 4px;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--text2) !important;
+  text-align: left;
+  animation: daa-fade-in 0.2s ease-out both;
+}
+
+/* A near miss is the case worth interrupting for: the question is about to be
+   sent to a slow local model and will come back invented. Marked by colour AND
+   by a leading symbol, never by colour alone. [Grant Bab 64] */
+.daa-interpret[data-kind="warn"] {
+  color: #8A4B24 !important;
+  font-weight: 500 !important;
+}
+
+.daa-interpret[data-kind="warn"]::before {
+  content: '! ';
+  font-weight: 700;
+}
+
+.dark .daa-interpret[data-kind="warn"],
+:root.dark .daa-interpret[data-kind="warn"] {
+  color: #E0A87A !important;
+}
+
+/* Corrective notes under the dataset preview. Notes, not errors: the file
+   still works, so they must not look like a failure. [Grant Bab 45-46] */
+.daa-preview-note {
+  margin: 6px 0 0 !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--text2) !important;
+  padding-left: 16px;
+  position: relative;
+}
+
+.daa-preview-note::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Download report — journey end (Grant Bab 70), on the axis of interaction
+   directly under the answer it exports (Marsh Bab 65). Secondary weight: it is
+   an EASY-tier action, not one that should compete with the next question. */
+.daa-report-row {
+  margin: 10px 0 0;
+}
+
+.daa-report {
+  font-size: 14px !important;
+  opacity: 0.9;
+}
+
+.daa-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10001;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--card-bg-solid);
+  border: 1px solid var(--neutral-border);
+  color: var(--text);
+  font-size: 14px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  animation: daa-fade-in 0.2s ease-out both;
+}
+
+/* [Grant Bab 40] motion is short and does not displace interactive elements */
+@keyframes daa-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daa-followup, .daa-capab { animation: none !important; }
+}
+
+/* Reassurance text — subtle trust signal under the suggestions
+   [Grant Bab 89] human voice; [P3] trust signal */
+/* MEASURED BY axe-core 4.12.1 (v68), the same engine Lighthouse uses.
+   This line was the only colour-contrast violation left on the page:
+       foreground #77726a on #161616  ->  3.79 : 1   (needs 4.5 : 1)
+   The declared colour was fine. The `opacity: 0.75` was not: opacity is applied
+   AFTER the colour, so the text is composited towards the background and the
+   real contrast drops silently. My own contrast audits missed it for exactly
+   that reason, because they read `color` and ignored `opacity`.
+   The opacity is removed and the tone set explicitly per theme, so the value
+   that is written is the value that is rendered.
+   Measured after the fix: 6.86 : 1 in dark, 5.17 : 1 in light.
+   [Grant Bab 59] contrast is a requirement, not a preference */
+.daa-reassurance {
+  text-align: center !important;
+  max-width: 620px;          /* same measure as .daa-blank */
+  margin: 12px auto 0 !important;
+  font-size: 14px !important;   /* meta step of the type scale (v62) */
+  color: #7A5F45 !important;
+  letter-spacing: 0.01em !important;
+  opacity: 1;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+.dark .daa-reassurance,
+:root.dark .daa-reassurance {
+  color: #A79E92 !important;
+}
+
+/* Hide the reassurance + custom blank when actual messages appear */
+body.daa-has-messages .daa-reassurance,
+body:has(.user-message) .daa-reassurance,
+body:has(.assistant-message) .daa-reassurance,
+body:has([data-message-id]) .daa-reassurance {
+  display: none !important;
+}
+
+
+/* ============================================
+   SUGGESTION CARDS — glass
+   ============================================ */
+
+/* Suggestion cards — secondary, lighter than the input
+   [Grant Bab 4] tier 2 visual weight; [Krug Bab 3] no over-affordance
+   Accent only appears on hover (active state) per project spec. */
+/* IMPORTANT: exclude our own containers. This rule targets Open WebUI's
+   suggestion cards by substring, and ".daa-suggestions" contains the word
+   "suggestion", so our quick-action group was inheriting a card border and
+   padding it was never meant to have. */
+button[class*="suggestion"]:not(.daa-sug):not(.daa-suggestions),
+div[class*="suggestion"]:not(.daa-suggestions):not(.daa-quickactions) {
+  background: transparent !important;
+  border: 1px solid var(--neutral-border) !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+  box-shadow: none !important;
+  color: var(--text2) !important;            /* muted — suggestion text is hint */
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  transition: border-color 0.15s, color 0.15s, background 0.15s !important;
+  /* removed: backdrop-filter, heavy shadow */
+}
+
+button[class*="suggestion"]:not(.daa-sug):hover, div[class*="suggestion"]:not(.daa-suggestions):not(.daa-quickactions):hover {
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+  background: var(--hover) !important;
+  box-shadow: none !important;
+}
+
+
+/* ============================================
+   TOGGLES / TOOLTIPS / UPLOAD / CODE / TABLES / MODALS / DROPDOWNS / LINKS
+   ============================================ */
+
+[role="switch"][aria-checked="true"] { background: var(--accent) !important; }
+
+.tippy-box {
+  background: var(--card-bg-solid) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--card-shadow) !important;
+  font-size: 14px !important;
+  color: var(--text) !important;
+}
+.tippy-content { background: transparent !important; color: var(--text) !important; }
+.tippy-arrow::before { color: var(--card-bg-solid) !important; }
+
+[class*="upload"], [class*="dropzone"] {
+  border: 1.5px dashed var(--neutral-border) !important;
+  border-radius: 12px !important;
+  background: var(--neutral-soft) !important;
+  /* removed glass + heavy accent — neutral surface, accent on hover only */
+}
+[class*="upload"]:hover, [class*="dropzone"]:hover {
+  border-color: var(--accent) !important;
+  background: var(--hover) !important;
+}
+
+pre, code {
+  font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace !important;
+}
+
+pre, pre code {
+  border-radius: 8px !important;
+  font-size: 14px !important;
+}
+
+pre {
+  background: var(--neutral-soft) !important;
+  border: 1px solid var(--neutral-border) !important;
+  padding: 14px !important;
+  /* removed: backdrop-filter — code blocks need stable contrast */
+}
+
+/* Source citation chips inside a sentence, e.g. "… = 285000 [contoh_penjualan.csv]".
+   MEASURED BUG (v59): these are <button> elements sitting inline in a
+   paragraph, so the global `button { min-height: 44px }` rule applied to them.
+   Measured: chip height 44px inside a paragraph whose line-height is 24px, so
+   every citation pushed its own line 20px taller and broke the text rhythm.
+   That 44px floor exists for TOUCH TARGETS (Grant Bab 69); an inline citation
+   marker is not one, and applying it there costs readability instead of
+   improving reach. The chip is also given one size for the button and its
+   inner label, which previously disagreed (12px vs 13px).
+   [Grant Bab 2-4] the baseline grid of running text must not be disturbed
+   [Grant Bab 69] applies to targets, not to markers inside a sentence */
+#messages-container p button,
+#messages-container li button,
+#messages-container p button span,
+#messages-container li button span {
+  min-height: 0 !important;
+  height: auto !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+#messages-container p button,
+#messages-container li button {
+  padding: 1px 7px !important;
+  border-radius: 6px !important;
+  vertical-align: baseline !important;
+  background: var(--neutral-soft) !important;
+  border: 1px solid var(--neutral-border) !important;
+  color: var(--text2) !important;
+  transform: none !important;
+}
+
+/* Inline code, e.g. a file name quoted inside a sentence.
+   MEASURED BUG (v57): the rule above gave every <code> the block treatment —
+   a fixed 14px size and an 8px radius — on top of Open WebUI's own padded
+   grey background. Inside a 16px paragraph that produced a pill taller than
+   its own line, which pushed the surrounding lines apart and drew more
+   attention than the sentence containing it.
+   It is now sized relative to the text it sits in, keeps the paragraph's
+   line-height, and carries only enough tint to be recognisable.
+   [Grant Bab 2-4] one type scale, and emphasis proportional to importance
+   [Krug Bab 3] visual noise: nothing should shout louder than the content */
+:not(pre) > code {
+  font-size: 0.92em !important;
+  line-height: inherit !important;
+  padding: 0.08em 0.34em !important;
+  border-radius: 4px !important;
+  background: var(--code-bg) !important;
+  border: 1px solid var(--neutral-border) !important;
+  color: var(--text) !important;
+  vertical-align: baseline !important;
+  white-space: nowrap !important;
+  font-weight: 400 !important;
+}
+
+table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  font-size: 16px !important;
+  background: var(--card-bg-solid) !important;
+}
+
+th {
+  background: var(--neutral-soft) !important;
+  color: var(--text2) !important;        /* muted — was cocoa accent (too loud) */
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  text-transform: uppercase !important;
+  font-size: 14px !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid var(--neutral-border) !important;
+  text-align: left !important;
+}
+
+td {
+  padding: 11px 16px !important;
+  border-bottom: 1px solid var(--divider) !important;
+  color: var(--text) !important;
+}
+
+tr:hover td { background: var(--hover) !important; }
+
+[role="dialog"] > div {
+  background: var(--modal-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+[role="menu"], [role="listbox"] {
+  background: var(--card-bg-solid) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+[role="menuitem"]:hover, [role="option"]:hover { background: var(--hover) !important; }
+
+[role="menuitem"], [role="option"] {
+  font-size: 16px !important;
+  padding: 10px 14px !important;
+  min-height: 40px !important;
+  color: var(--text) !important;
+}
+
+a {
+  color: var(--accent) !important;
+  text-decoration-color: var(--accent-light) !important;
+  text-underline-offset: 2px !important;
+}
+a:hover {
+  color: var(--accent2) !important;
+  text-decoration-color: var(--accent2) !important;
+}
+
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--divider); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cocoa-soft); }
+
+::selection { background: rgba(88,55,34,0.22); color: var(--text); }
+
+.model-info-details, [class*="parameter-count"] { display: none !important; }
+
+
+/* ============================================
+   REDUCED MOTION
+   [G Bab 65] honor accessibility preferences
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  div.sm\:max-w-md, div[class*="sm:max-w-md"] { animation: none !important; }
+  * { transition-duration: 0.01ms !important; }
+}
